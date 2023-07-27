@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo - AWS Style</title>
+   <!-- Inclua os arquivos CSS do Bootstrap e FontAwesome -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   <!-- Inclua o Chart.js -->
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Estilo personalizado para ajustar a altura da página e o posicionamento do menu lateral */
+    body, html {
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    tbody tr:hover {
+      cursor: pointer;
+    }
+
+    .container-fluid {
+      height: 100%;
+    }
+    .row {
+      height: 100%;
+    }
+    .col-md-3 {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      height: 100%;
+      overflow-y: auto;
+      padding-right: 0;
+      padding-top: 80px; /* Espaçamento maior do header */
+      background-color: #252f3d; /* Cor de fundo do menu lateral */
+      color: white; /* Texto branco */
+      transition: all 0.3s; /* Transição suave */
+    }
+    /* Estilo personalizado para o menu lateral */
+    .list-group-item {
+      background-color: transparent; /* Fundo transparente */
+      color: white; /* Texto branco */
+      border: none; /* Sem bordas */
+    }
+    .list-group-item:hover {
+      background-color: #1a222c; /* Fundo mais claro no hover */
+    }
+    .list-group-item.active {
+      background-color: #1a222c; /* Fundo mais claro para o item ativo */
+      font-weight: bold;
+    }
+    .list-group-item i {
+      margin-right: 10px; /* Espaçamento entre o ícone e o texto */
+    }
+    /* Estilo personalizado para diminuir a largura do menu lateral */
+    @media (min-width: 992px) {
+      .col-md-3 {
+        flex: 0 0 260px; /* Largura de 260 pixels */
+        max-width: 260px; /* Largura máxima de 260 pixels */
+      }
+    }
+    /* Estilo personalizado para a imagem de fundo da página */
+    .page-background {
+      background-image: url('https://example.com/sua-imagem-de-fundo.jpg'); /* Substitua pelo URL da imagem de fundo */
+      background-size: cover;
+      background-position: center;
+      height: 100%;
+    }
+    /* Estilo personalizado para o conteúdo da página */
+    .page-content {
+      padding: 30px;
+      color: #333;
+      transition: all 0.3s; /* Transição suave */
+    }
+
+    /* Estilo personalizado para o menu responsivo */
+    @media (max-width: 991.98px) {
+      .col-md-3 {
+        position: absolute; /* Mudar a posição para absolute */
+        top: 0;
+        left: 0;
+        width: 100%; /* Definir a largura para 100% */
+        max-width: 260px; /* Largura máxima de 260 pixels */
+        transform: translateX(-100%); /* Esconde o menu lateral fora da tela */
+      }
+      .page-content {
+        padding-left: 0; /* Remove o espaço à esquerda para acomodar o menu lateral */
+      }
+      /* Estilo personalizado para mostrar o menu lateral ao clicar no ícone de hambúrguer */
+      .show-menu .col-md-3 {
+        transform: translateX(0); /* Mostra o menu lateral */
+      }
+      .show-menu .page-content {
+        opacity: 0.5; /* Reduz a opacidade do conteúdo ao mostrar o menu */
+      }
+      /* Estilo para ajustar a posição do conteúdo quando o menu lateral está oculto */
+      .show-menu .page-content {
+        transform: translateX(260px); /* Ajusta a posição do conteúdo ao mostrar o menu */
+      }
+      /* Estilo para esconder o botão de notificações no modo mobile */
+      .show-menu .navbar .nav-item.notifications {
+        display: none;
+      }
+     
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Painel Administrativo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <!-- Adicione aqui o botão de notificações -->
+          <li class="nav-item notifications">
+            <a class="nav-link" href="#">
+              <i class="fas fa-bell"></i>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <i class="fas fa-user"></i> Usuário
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="#">Perfil</a></li>
+              <li><a class="dropdown-item" href="#">Configurações</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a id="button-sair" class="dropdown-item" href="#">Sair</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid page-background mt-5">
+    <div class="row">
+      <div class="col-md-3" id="sidebar">
+        <!-- Aqui você pode adicionar os links para as diferentes seções do painel -->
+        <div class="list-group">
+          <a href="../pages/home.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-home"></i> Início
+          </a>
+          <a href="../pages/integrations.html" class="list-group-item list-group-item-action active">
+            <i class="fas fa-link"></i> Integrações
+          </a>
+          <a href="../pages/notifications.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-link"></i> Notificações
+          </a>
+          <!-- Adicione mais itens de menu aqui, se necessário -->
+        </div>
+      </div>
+      <div class="col-md-9 page-content">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="m-0">Integrações</h2>
+            <button id="button-new-integration" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNovaIntegracao">
+              Adicionar Nova Integração
+            </button>
+        </div>
+
+        <!-- Tabela para mostrar as integrações salvas -->
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Título</th>
+                <th scope="col">URL</th>
+                <th scope="col">Porta</th>
+                <th scope="col">Intervalo</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Criado em</th>
+                <th scope="col">Atualizado em</th>
+                <th scope="col">Monitorado em</th>
+                <th scope="col">Próximo Monitoramento</th>
+            </tr>
+            </thead>
+            <tbody id="tbody-integracoes">
+                <!-- Exemplo de linha da tabela com informações fictícias (pode ser dinamicamente gerado a partir dos dados do backend) -->
+                <tr data-bs-toggle="modal" data-bs-target="#modalDetalhesIntegracao"
+                    data-detalhe-titulo="Integração 1"
+                    data-detalhe-url="https://example.com"
+                    data-detalhe-porta="8080"
+                    data-detalhe-intervalo="5"
+                    data-detalhe-descricao="Descrição da Integração 1">
+                  <td>Integração 1</td>
+                  <td>https://example.com</td>
+                  <td>8080</td>
+                  <td>5</td>
+                  <td>Descrição da Integração 1</td>
+                  <td>2023-07-21 10:00</td>
+                  <td>2023-07-21 14:30</td>
+                  <td>2023-07-21 12:15</td>
+                  <td>2023-07-21 15:00</td>
+                </tr>
+                <!-- Adicione mais linhas de acordo com as integrações salvas -->
+            </tbody>
+        </table>
+      </div>
+
+    <!-- Modal para adicionar uma nova integração -->
+    <div class="modal fade" id="modalNovaIntegracao" tabindex="-1" aria-labelledby="modalNovaIntegracaoLabel"
+    aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="modalNovaIntegracaoLabel">Adicionar Nova Integração</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                <!-- Formulário para adicionar uma nova integração -->
+                <form>
+                    <div class="mb-3">
+                      <label for="titulo" class="form-label">Título*</label>
+                      <input type="text" class="form-control" id="titulo" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="url" class="form-label">URL*</label>
+                      <input type="text" class="form-control" id="url" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="porta" class="form-label">Porta</label>
+                      <input type="text" class="form-control" id="porta" required>
+                    </div>
+                    <div class="mb-3">
+                    <!-- Campo de intervalo -->
+                      <label class="block mt-4">
+                        <span class="text-gray-700">Intervalo (em minutos):</span>
+                        <select class="form-select mt-1 block w-full" id="intervalSelect">
+                          <option value="1">1</option>
+                          <option value="5">5</option>
+                          <option value="10">10</option>
+                          <option value="15">15</option>
+                          <option value="30">30</option>
+                          <option value="45">45</option>
+                          <option value="60">60</option>
+                        </select>
+                      </label>
+                    </div>
+                    <div class="mb-3">
+                    <label for="descricao" class="form-label">Descrição</label>
+                    <textarea class="form-control" id="descricao" rows="3" required></textarea>
+                    </div>
+                </form>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="adicionarIntegracao()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para exibir informações detalhadas da integração -->
+    <div class="modal fade" id="modalDetalhesIntegracao" tabindex="-1" aria-labelledby="modalDetalhesIntegracaoLabel"
+    aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="modalDetalhesIntegracaoLabel">Detalhes da Integração</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                <p><strong>Título:</strong> <span id="detalheTitulo"></span></p>
+                <p><strong>URL:</strong> <span id="detalheURL"></span></p>
+                <p><strong>Porta:</strong> <span id="detalhePorta"></span></p>
+                <p><strong>Intervalo:</strong> <span id="detalheIntervalo"></span></p>
+                <p><strong>Descrição:</strong> <span id="detalheDescricao"></span></p>
+                <!-- Adicione mais detalhes da integração, se necessário -->
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  <!-- Inclua os arquivos JS do Bootstrap e FontAwesome -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+  <script src="../js/verifyToken.js"></script>
+  <script src="../js/integrations.js"></script>
+  <script>
+    // Script para atualizar o conteúdo do modal com as informações detalhadas da integração
+    document.querySelectorAll('tbody tr').forEach((row) => {
+        row.addEventListener('click', () => {
+        const titulo = row.dataset.detalheTitulo;
+        const url = row.dataset.detalheURL;
+        const porta = row.dataset.detalhePorta;
+        const intervalo = row.dataset.detalheIntervalo;
+        const descricao = row.dataset.detalheDescricao;
+
+        // Atualiza o conteúdo do modal com as informações detalhadas da integração
+        document.getElementById('detalheTitulo').textContent = titulo;
+        document.getElementById('detalheURL').textContent = url;
+        document.getElementById('detalhePorta').textContent = porta;
+        document.getElementById('detalheIntervalo').textContent = intervalo;
+        document.getElementById('detalheDescricao').textContent = descricao;
+        });
+    });
+</script>
+</body>
+
+</html>

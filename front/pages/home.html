@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo - AWS Style</title>
+   <!-- Inclua os arquivos CSS do Bootstrap e FontAwesome -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   <!-- Inclua o Chart.js -->
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Estilo personalizado para ajustar a altura da página e o posicionamento do menu lateral */
+    body, html {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      cursor: pointer;
+    }
+    .container-fluid {
+      height: 100%;
+    }
+    .row {
+      height: 100%;
+    }
+    .col-md-3 {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      height: 100%;
+      overflow-y: auto;
+      padding-right: 0;
+      padding-top: 80px; /* Espaçamento maior do header */
+      background-color: #252f3d; /* Cor de fundo do menu lateral */
+      color: white; /* Texto branco */
+      transition: all 0.3s; /* Transição suave */
+    }
+    /* Estilo personalizado para o menu lateral */
+    .list-group-item {
+      background-color: transparent; /* Fundo transparente */
+      color: white; /* Texto branco */
+      border: none; /* Sem bordas */
+    }
+    .list-group-item:hover {
+      background-color: #1a222c; /* Fundo mais claro no hover */
+    }
+    .list-group-item.active {
+      background-color: #1a222c; /* Fundo mais claro para o item ativo */
+      font-weight: bold;
+    }
+    .list-group-item i {
+      margin-right: 10px; /* Espaçamento entre o ícone e o texto */
+    }
+    /* Estilo personalizado para diminuir a largura do menu lateral */
+    @media (min-width: 992px) {
+      .col-md-3 {
+        flex: 0 0 260px; /* Largura de 260 pixels */
+        max-width: 260px; /* Largura máxima de 260 pixels */
+      }
+    }
+    /* Estilo personalizado para a imagem de fundo da página */
+    .page-background {
+      background-image: url('https://example.com/sua-imagem-de-fundo.jpg'); /* Substitua pelo URL da imagem de fundo */
+      background-size: cover;
+      background-position: center;
+      height: 100%;
+    }
+    /* Estilo personalizado para o conteúdo da página */
+    .page-content {
+      padding: 30px;
+      color: #333;
+      transition: all 0.3s; /* Transição suave */
+    }
+
+    /* Estilo personalizado para o menu responsivo */
+    @media (max-width: 991.98px) {
+      .col-md-3 {
+        position: absolute; /* Mudar a posição para absolute */
+        top: 0;
+        left: 0;
+        width: 100%; /* Definir a largura para 100% */
+        max-width: 260px; /* Largura máxima de 260 pixels */
+        transform: translateX(-100%); /* Esconde o menu lateral fora da tela */
+      }
+      .page-content {
+        padding-left: 0; /* Remove o espaço à esquerda para acomodar o menu lateral */
+      }
+      /* Estilo personalizado para mostrar o menu lateral ao clicar no ícone de hambúrguer */
+      .show-menu .col-md-3 {
+        transform: translateX(0); /* Mostra o menu lateral */
+      }
+      .show-menu .page-content {
+        opacity: 0.5; /* Reduz a opacidade do conteúdo ao mostrar o menu */
+      }
+      /* Estilo para ajustar a posição do conteúdo quando o menu lateral está oculto */
+      .show-menu .page-content {
+        transform: translateX(260px); /* Ajusta a posição do conteúdo ao mostrar o menu */
+      }
+      /* Estilo para esconder o botão de notificações no modo mobile */
+      .show-menu .navbar .nav-item.notifications {
+        display: none;
+      }
+
+      .loader {
+        border: 4px solid rgba(0, 0, 0, 0.3);
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 2s linear infinite;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Loading spinner -->
+  <div class="loader" id="loadingSpinner"></div>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Painel Administrativo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <!-- Adicione aqui o botão de notificações -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <i class="fas fa-bell"></i>
+            </a>
+            <!-- Menu suspenso para as notificações -->
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+              <!-- Aqui você pode adicionar as notificações dinamicamente com JavaScript -->
+              <li><a class="dropdown-item" href="#">Notificação 1</a></li>
+              <li><a class="dropdown-item" href="#">Notificação 2</a></li>
+              <!-- Adicione mais itens de notificações aqui, se necessário -->
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <i class="fas fa-user"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="#">Perfil</a></li>
+              <li><a class="dropdown-item" href="#">Configurações</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a id="button-sair" class="dropdown-item" href="#">Sair</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid page-background mt-5">
+    <div class="row">
+      <div class="col-md-3" id="sidebar">
+        <!-- Aqui você pode adicionar os links para as diferentes seções do painel -->
+        <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-action active">
+            <i class="fas fa-home"></i> Início
+          </a>
+          <a href="../pages/integrations.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-link"></i> Integrações
+          </a>
+          <a href="../pages/notifications.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-link"></i> Notificações
+          </a>
+          <!-- Adicione mais itens de menu aqui, se necessário -->
+        </div>
+      </div>
+      <div class="col-md-9 page-content">
+        <!-- Aqui você pode incluir o conteúdo dinâmico do painel -->
+        <h2>Bem-vindo ao Painel Administrativo</h2>
+        <p>Este é um exemplo de página de painel administrativo usando o Bootstrap.</p>
+
+        <!-- Cards de Visão Geral das Integrações -->
+        <div class="row">
+          <!-- Card da Integração 1 -->
+          <div class="col-md-4 mb-4">
+            <div class="card" data-bs-toggle="modal" data-bs-target="#modalIntegracao1">
+              <div class="card-body">
+                <h5 class="card-title">Integração 1</h5>
+                <p class="card-text">Status: Ativo</p>
+                <p class="card-text">Última Atualização: 2023-07-21</p>
+                <!-- Adicione mais informações relevantes sobre a Integração 1 aqui -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Card da Integração 2 -->
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Integração 2</h5>
+                <p class="card-text">Status: Inativo</p>
+                <p class="card-text">Última Atualização: 2023-07-19</p>
+                <!-- Adicione mais informações relevantes sobre a Integração 2 aqui -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Adicione mais cards de integrações aqui (se necessário) -->
+          <!-- Card da Integração 2 -->
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Integração 3</h5>
+                <p class="card-text">Status: Inativo</p>
+                <p class="card-text">Última Atualização: 2023-07-19</p>
+                <!-- Adicione mais informações relevantes sobre a Integração 2 aqui -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para a Integração 1 -->
+  <div class="modal fade" id="modalIntegracao1" tabindex="-1" aria-labelledby="modalIntegracao1Label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalIntegracao1Label">Detalhes da Integração 1</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Conteúdo detalhado sobre a Integração 1 -->
+          <p>Aqui você pode adicionar mais informações detalhadas sobre a Integração 1, como configurações, detalhes de conexão, etc.</p>
+          <!-- Adicione mais informações detalhadas conforme necessário -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inclua os arquivos JS do Bootstrap e FontAwesome -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+  <script src="../js/verifyToken.js"></script>
+  <script>
+    // Ocultar o spinner quando a página estiver totalmente carregada
+    window.addEventListener('load', () => {
+      loadingSpinner.style.display = 'none';
+    });
+  </script>
+</body>
+
+</html>
