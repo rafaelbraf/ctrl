@@ -15,7 +15,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Integration {
 
     @Id
@@ -36,6 +35,18 @@ public class Integration {
     private Instant nextMonitoringAt;
 
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
 
+    public Integration(String title, String url, String port, Integer interval, String description, Instant createdAt, Instant updatedAt, Instant monitoringAt, Instant nextMonitoringAt, String userId) {
+        this.title = title;
+        this.url = url;
+        this.port = port;
+        this.interval = interval;
+        this.description = description;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.monitoringAt = monitoringAt;
+        this.nextMonitoringAt = nextMonitoringAt;
+        this.userId = userId;
+    }
 }
