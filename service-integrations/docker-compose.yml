@@ -1,0 +1,44 @@
+version: '3.8'
+
+networks:
+  net-monitor-services:
+    driver: bridge
+
+services:
+  service-integrations-app:
+    image: rafaelbrunof/service-integrations
+    container_name: teste
+    ports:
+      - "8000:8000"
+    command: ["java", "-jar", "service-integrations.jar"]
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    networks:
+      - net-monitor-services
+    environment:
+      - DB_URL=jdbc:postgresql://postgres_db:5432/service-integrations?user=postgres&password=password&sslmode=disable
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=password
+
+  postgres_db:
+    image: postgres:latest
+    container_name: meu_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: service-integrations
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - net-monitor-services
+
+volumes:
+  pgdata:
