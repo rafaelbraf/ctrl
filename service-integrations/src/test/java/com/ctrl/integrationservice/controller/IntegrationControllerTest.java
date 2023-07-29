@@ -1,34 +1,50 @@
 package com.ctrl.integrationservice.controller;
 
+import com.ctrl.integrationservice.IntegrationServiceApplication;
 import com.ctrl.integrationservice.model.Integration;
 import com.ctrl.integrationservice.service.IntegrationService;
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-@WebMvcTest(IntegrationController.class)
-public class IntegrationControllerTests {
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = IntegrationServiceApplication.class)
+@AutoConfigureMockMvc
+public class IntegrationControllerTest {
 
-    @Autowired
+    @InjectMocks
     private IntegrationController integrationController;
 
     @Autowired
-    private MockMvc mockMvc;
+    private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    protected MockMvc mockMvc;
 
     @MockBean
     private IntegrationService integrationService;
@@ -40,7 +56,10 @@ public class IntegrationControllerTests {
 
     @BeforeEach
     void setup() {
-        RestAssuredMockMvc.standaloneSetup(integrationController);
+        MockitoAnnotations.initMocks(this);
+
+        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        this.mockMvc = MockMvcBuilders.standaloneSetup(integrationController).setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper)).build();
 
         dateTimeTest = Instant.parse("2023-05-27T03:00:00Z");
 
