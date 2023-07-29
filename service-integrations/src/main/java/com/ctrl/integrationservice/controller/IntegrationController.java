@@ -37,6 +37,13 @@ public class IntegrationController {
         return ResponseEntity.ok().body(integration);
     }
 
+    @GetMapping("/user/{userId}")
+    private ResponseEntity<List<Integration>> findByUserId(@PathVariable String userId) {
+        List<Integration> integrationList = integrationService.findByUserId(userId);
+
+        return ResponseEntity.ok().body(integrationList);
+    }
+
     @PostMapping("/create")
     private ResponseEntity<Integration> create(@RequestBody Integration integration) {
         Integration integrationSaved = integrationService.create(integration);

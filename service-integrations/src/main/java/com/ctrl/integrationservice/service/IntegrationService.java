@@ -24,6 +24,10 @@ public class IntegrationService {
         return integrationRepository.findById(id).orElseThrow();
     }
 
+    public List<Integration> findByUserId(String userId) {
+        return integrationRepository.findByUserId(userId);
+    }
+
     public Integration create(Integration integration) {
         Instant instantToSave = Instant.now();
 

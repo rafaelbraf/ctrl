@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +114,24 @@ public class IntegrationControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("id").value(uuidTest.toString()))
+                .andExpect(MockMvcResultMatchers.content().json(expected));
+    }
+
+    @Test
+    void retornaOkEListaDeIntegracoesDoUsuarioQuandoBuscarIntegracoesPeloIdDoUsuario() throws Exception {
+        Mockito.when(integrationService.findByUserId(uuidTestUser)).thenReturn(List.of(integration));
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/integrations/user/{userId}", uuidTestUser).contentType(MediaType.APPLICATION_JSON);
+
+        String expected = "[{'id':'" + uuidTest + "'," +
+                "'title':'Teste','url':'http://teste.com','port':'8080','interval':30,'description':'Teste de Integração'," +
+                "'createdAt':'" + dateTimeTest + "','updatedAt':'" + dateTimeTest + "', 'monitoringAt':'" + dateTimeTest + "','nextMonitoringAt':'" + dateTimeTest + "'," +
+                "'userId':'" + uuidTestUser + "'}]";
+
+        mockMvc.perform(requestBuilder)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("[0].userId").value(uuidTestUser))
                 .andExpect(MockMvcResultMatchers.content().json(expected));
     }
 
