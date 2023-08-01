@@ -6,10 +6,12 @@ import (
 	"ctrl/service-monitor-integrations/model"
 	"ctrl/service-monitor-integrations/db"
 	"ctrl/service-monitor-integrations/service"
+	"ctrl/service-monitor-integrations/internal"
 )
 
 func init() {
 	db.ConnectDb()
+	internal.ConnectToRabbitMQ()
 }
 
 func main() {
