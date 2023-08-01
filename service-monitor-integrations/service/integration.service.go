@@ -27,7 +27,7 @@ func GetAllIntegrations() []model.Integration {
 		var respBodyString = []byte(string(respBody))
 
 		if err := json.Unmarshal(respBodyString, &integrations); err != nil {
-			fmt.Println("Erro ao transforma corpo da resposta em Integrações")
+			fmt.Println("Erro ao transformar corpo da resposta em Integrações")
 		}
 	}
 
