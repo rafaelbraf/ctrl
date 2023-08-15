@@ -15,7 +15,7 @@ func ConnectToRabbitMQ() (*amqp.Connection, error) {
 
 func declareQueue(channel *amqp.Channel) (amqp.Queue, error) {
 	queue, err := channel.QueueDeclare(
-		"integracoes-offline",
+		"integrations-notifications",
 		true,
 		false,
 		false,
