@@ -7,6 +7,8 @@ import { signJwt } from "../utils/jwt";
 import { DocumentType } from "@typegoose/typegoose";
 import redisClient from "../utils/connectRedis";
 
+const mongoose = require("mongoose");
+
 export const createUser = async (input: Partial<User>) => {
     const user = await userModel.create(input);
 
@@ -14,7 +16,7 @@ export const createUser = async (input: Partial<User>) => {
 }
 
 export const findUserById = async (id: string) => {
-    const user = await userModel.findById(id).lean();
+    const user = await userModel.findById( new mongoose.Types.ObjectId(id) ).exec();
 
     return omit(user, excludedFields);
 }

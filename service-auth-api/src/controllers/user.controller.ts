@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { findAllUsers } from "../services/user.service";
+import { findAllUsers, findUserById } from "../services/user.service";
 
 export const getMeHandler = (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -15,6 +15,21 @@ export const getMeHandler = (req: Request, res: Response, next: NextFunction) =>
         next(err);
     }
 };
+
+export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = await findUserById(req.params.id);
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                user
+            }
+        });
+    } catch (err: any) {
+        next(err);
+    }
+}
 
 export const getAllUsersHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
