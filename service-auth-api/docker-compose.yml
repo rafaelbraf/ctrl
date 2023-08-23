@@ -7,7 +7,7 @@ networks:
 services:
 
   api-auth:
-    image: rafaelbrunof/ctrl-auth-api
+    image: rafaelbrunof/service-auth-api
     networks:
       - network-ctrl-auth-api
     depends_on:
