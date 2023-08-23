@@ -1,9 +1,12 @@
 package com.ctrl.integrationservice.controller;
 
+import com.ctrl.integrationservice.dto.IntegrationResponseDTO;
+import com.ctrl.integrationservice.dto.IntegrationResponseUserIdDTO;
 import com.ctrl.integrationservice.model.Integration;
 import com.ctrl.integrationservice.service.IntegrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,33 +27,50 @@ public class IntegrationController {
     private IntegrationService integrationService;
 
     @GetMapping
-    private ResponseEntity<List<Integration>> findAll() {
-        List<Integration> integrationList = integrationService.findAll();
+    private ResponseEntity<List<IntegrationResponseDTO>> findAll() {
+        List<IntegrationResponseDTO> integrationResponseDTOList = integrationService.findAll();
 
-        return ResponseEntity.ok().body(integrationList);
+        return ResponseEntity.ok().body(integrationResponseDTOList);
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<Integration> findById(@PathVariable UUID id) {
-        Integration integration = integrationService.findById(id);
+    private ResponseEntity<IntegrationResponseDTO> findById(@PathVariable UUID id) {
+        IntegrationResponseDTO integrationResponseDTO = integrationService.findById(id);
 
-        return ResponseEntity.ok().body(integration);
+        return ResponseEntity.ok().body(integrationResponseDTO);
     }
 
     @GetMapping("/user/{userId}")
-    private ResponseEntity<List<Integration>> findByUserId(@PathVariable String userId) {
-        List<Integration> integrationList = integrationService.findByUserId(userId);
+    private ResponseEntity<List<IntegrationResponseDTO>> findByUserId(@PathVariable String userId) {
+        List<IntegrationResponseDTO> integrationResponseDTOList = integrationService.findByUserId(userId);
 
-        return ResponseEntity.ok().body(integrationList);
+        return ResponseEntity.ok().body(integrationResponseDTOList);
+    }
+
+    @GetMapping("/user/integration/{integrationId}")
+    private ResponseEntity<IntegrationResponseUserIdDTO> findUserByIntegrationId(@PathVariable UUID integrationId) {
+        IntegrationResponseDTO integrationResponseDTO = integrationService.findById(integrationId);
+        IntegrationResponseUserIdDTO integrationResponseUserIdDTO = new IntegrationResponseUserIdDTO(integrationResponseDTO.getUserId());
+
+        return ResponseEntity.ok().body(integrationResponseUserIdDTO);
     }
 
     @PostMapping("/create")
-    private ResponseEntity<Integration> create(@RequestBody Integration integration) {
-        Integration integrationSaved = integrationService.create(integration);
+    private ResponseEntity<IntegrationResponseDTO> create(@RequestBody Integration integration) {
+        IntegrationResponseDTO integrationResponseDTOSaved = integrationService.create(integration);
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(integrationSaved.getId()).toUri();
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(integrationResponseDTOSaved.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(integrationSaved);
+        return ResponseEntity.created(uri).body(integrationResponseDTOSaved);
+    }
+
+    @DeleteMapping("/{integrationId}")
+    private ResponseEntity<Void> delete(@PathVariable UUID integrationId) {
+        IntegrationResponseDTO integrationResponseDTO = integrationService.findById(integrationId);
+
+        integrationService.delete(integrationResponseDTO);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
