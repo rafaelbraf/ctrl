@@ -1,6 +1,7 @@
 package com.ctrl.integrationservice.controller;
 
 import com.ctrl.integrationservice.IntegrationServiceApplication;
+import com.ctrl.integrationservice.dto.IntegrationResponseDTO;
 import com.ctrl.integrationservice.model.Integration;
 import com.ctrl.integrationservice.service.IntegrationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ public class IntegrationControllerTest {
 
     private UUID uuidTest = UUID.randomUUID();
     private String uuidTestUser = UUID.randomUUID().toString();
-    private Integration integration;
+    private IntegrationResponseDTO integration;
     private Instant dateTimeTest;
 
     @BeforeEach
@@ -64,25 +64,23 @@ public class IntegrationControllerTest {
 
         dateTimeTest = Instant.parse("2023-05-27T03:00:00Z");
 
-        integration = new Integration(
-                "Teste",
-                "http://teste.com",
-                "8080",
-                30,
-                "Teste de Integração",
-                dateTimeTest,
-                dateTimeTest,
-                dateTimeTest,
-                dateTimeTest,
-                uuidTestUser
-        );
-
+        integration = new IntegrationResponseDTO();
         integration.setId(uuidTest);
+        integration.setTitle("Teste");
+        integration.setUrl("http://teste.com");
+        integration.setPort("8080");
+        integration.setInterval(30);
+        integration.setDescription("Teste de Integração");
+        integration.setCreatedAt(dateTimeTest);
+        integration.setUpdatedAt(dateTimeTest);
+        integration.setMonitoringAt(dateTimeTest);
+        integration.setNextMonitoringAt(dateTimeTest);
+        integration.setUserId(uuidTestUser);
     }
 
     @Test
     void retornaOkEListaDeIntegracoesQuandoBuscarIntegracoes() throws Exception {
-        List<Integration> integrationList = List.of(integration);
+        List<IntegrationResponseDTO> integrationList = List.of(integration);
 
         Mockito.when(integrationService.findAll()).thenReturn(integrationList);
 
