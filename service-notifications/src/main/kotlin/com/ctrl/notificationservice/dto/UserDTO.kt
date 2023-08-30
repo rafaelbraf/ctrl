@@ -1,7 +1,6 @@
 package com.ctrl.notificationservice.dto
 
 import com.ctrl.notificationservice.model.User
-import java.time.Instant
 
 data class UserDTO(
     val status: String,
