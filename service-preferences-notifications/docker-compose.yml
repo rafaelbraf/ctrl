@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo
+    container_name: bd-preferences-notif
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rafaelbruno
+      MONGO_INITDB_ROOT_PASSWORD: password
+
+volumes:
+  mongodb_data:
