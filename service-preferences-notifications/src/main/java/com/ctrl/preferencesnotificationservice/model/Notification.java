@@ -18,4 +18,9 @@ public class Notification {
     private boolean active;
     private String userId;
 
+    public Notification(String name, boolean active, String userId) {
+        this.name = name;
+        this.active = active;
+        this.userId = userId;
+    }
 }
