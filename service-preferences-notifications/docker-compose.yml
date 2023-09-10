@@ -1,5 +1,19 @@
 version: '3.8'
+
+networks:
+  net-preferences-notifications:
+    driver: bridge
+
 services:
+
+  service:
+    image: rafaelbrunof/preferences-notifications
+    container_name: preferences-notifications
+    ports:
+      - "8083:8083"
+    networks:
+      - net-preferences-notifications
+
   mongodb:
     image: mongo
     container_name: bd-preferences-notif
@@ -8,8 +22,10 @@ services:
     volumes:
       - mongodb_data:/data/db
     environment:
-      MONGO_INITDB_ROOT_USERNAME: rafaelbruno
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS}
+    networks:
+      - net-preferences-notifications
 
 volumes:
   mongodb_data:
