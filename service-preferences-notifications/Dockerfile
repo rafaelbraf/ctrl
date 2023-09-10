@@ -6,5 +6,5 @@ RUN ./gradlew build
 FROM openjdk:17
 WORKDIR /app
 COPY --from=build /app/build/libs/preferencesnotificationservice-0.0.1-SNAPSHOT.jar preferencesnotifications-api.jar
-EXPOSE 8080
+EXPOSE 8083
 CMD ["java", "-jar", "preferencesnotifications-api.jar"]
